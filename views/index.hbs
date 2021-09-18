@@ -1,0 +1,18 @@
+<div class="container">
+    <form action="/api/posts" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control" name="title" placeholder="Enter title">
+    </div>
+     <div class="form-group">
+        <label>Description</label>
+        <input type="text" class="form-control" name="description" placeholder="Enter description">
+    </div>
+     <div class="form-group">
+        <label>Upload file</label>
+        <input type="file" name="file">
+    </div>
+
+    <input type="submit" value="Post">
+</form>
+</div>

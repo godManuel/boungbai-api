@@ -1,3 +1,5 @@
+const path = require('path')
+const hbs = require('express-handlebars');
 require("dotenv").config();
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -70,6 +72,10 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.engine('hbs', hbs({ extname: '.hbs',  defaultLayout: false,}))
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+
 
 // --- Custom Middlewares
 app.use("/api/auth", auth);
