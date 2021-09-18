@@ -1,0 +1,39 @@
+{
+  "name": "boungbai-backend",
+  "version": "1.0.0",
+  "description": "A node.js backend server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": "14.17.6"
+  },
+  "author": "Boungbai",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "cloudinary": "^1.26.1",
+    "config": "^3.3.6",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "gridfs-stream": "^1.1.1",
+    "joi": "^17.4.0",
+    "joi-objectid": "^3.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^5.12.3",
+    "multer": "^1.4.3",
+    "multer-gridfs-storage": "^5.0.1",
+    "nodemailer": "^6.6.0",
+    "winston": "^2.4.0",
+    "winston-mongodb": "^3.0.0"
+  },
+  "devDependencies": {
+    "datauri": "^3.0.0"
+  }
+}
