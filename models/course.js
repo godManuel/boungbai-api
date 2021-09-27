@@ -26,9 +26,12 @@ const Course = mongoose.model('Course', new mongoose.Schema({
     },
     isPublished: {
         type: Boolean,
-        required: true,
         default: false
-    }
+    },
+    video: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Video"
+    }]
 }));
 
 
@@ -36,8 +39,7 @@ function validateCourse(course) {
     const schema = Joi.object({
         name: Joi.string().min(5).max(50).required(),
         author: Joi.string().min(5).max(50).required(),
-        price: Joi.number().min(5).max(300).required(),
-        isPublished: Joi.boolean().required()
+        price: Joi.number().min(5).max(300).required()
     })
 
     return schema.validate(course);
