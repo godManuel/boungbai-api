@@ -1,5 +1,5 @@
 const multer = require('multer');
-const Datauri = require('datauri/parser');
+const Datauri = require('datauri');
 const path = require('path');
 
 const storage = multer.memoryStorage();
