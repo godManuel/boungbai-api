@@ -27,11 +27,7 @@ const Course = mongoose.model('Course', new mongoose.Schema({
     isPublished: {
         type: Boolean,
         default: false
-    },
-    video: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Video"
-    }]
+    }
 }));
 
 

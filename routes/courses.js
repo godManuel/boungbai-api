@@ -61,6 +61,7 @@ router.post('/:id/video', multerUploads.single('file'), cloudinaryConfig, async 
        if(err) throw err;
        
        let video = new Video({ 
+           course: req.body.course,
            url: result.secure_url
        })
 
