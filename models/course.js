@@ -19,7 +19,7 @@ const Course = mongoose.model('Course', new mongoose.Schema({
         default: Date.now()
     },
     price: {
-        type: Number,
+        type: String,
         required: true,
         min: 5,
         max: 300
@@ -27,6 +27,9 @@ const Course = mongoose.model('Course', new mongoose.Schema({
     isPublished: {
         type: Boolean,
         default: false
+    },
+    video: {
+        type: String
     }
 }));
 
