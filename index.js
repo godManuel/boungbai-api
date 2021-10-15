@@ -41,7 +41,7 @@ if (!config.get("jwtPrivateKey")) {
 
 // Connecting to MongoDB
 mongoose
-  .connect("mongodb://localhost/boungbai", {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
