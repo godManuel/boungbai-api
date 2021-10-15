@@ -40,8 +40,21 @@ if (!config.get("jwtPrivateKey")) {
 }
 
 // Connecting to MongoDB
+// mongoose
+//   .connect(process.env.MONGO_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true,
+//   })
+//   .then(() => {
+//     console.log("Connected to MongoDB...");
+//   })
+//   .catch((err) => {
+//     console.error("Connection to MongoDB failed!", err);
+//   });
+
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect("mongodb://localhost/boungbai", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,

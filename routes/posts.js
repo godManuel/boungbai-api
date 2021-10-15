@@ -1,8 +1,13 @@
-const { GridFsStorage } = require("multer-gridfs-storage");
-const { Grid } = require("gridfs-stream");
-const crypto = require("crypto");
-const path = require("path");
-const multer = require("multer");
+// const { GridFsStorage } = require("multer-gridfs-storage");
+// const { Grid } = require("gridfs-stream");
+// const crypto = require("crypto");
+// const path = require("path");
+// const multer = require("multer");
+const cloudinary = require("../utils/cloudinary");
+const cloudinaryConfig = cloudinary.cloudinaryConfig;
+const multer = require("../utils/multer");
+const multerUploads = multer.multerUploads;
+const datauri = multer.datauri;
 const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
@@ -13,39 +18,39 @@ const { Comment } = require("../models/comment");
 const { Reply } = require("../models/reply");
 
 // Connecting to MongoDB
-const conn = mongoose.createConnection(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// const conn = mongoose.createConnection(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 
 // Initialize gfs
-let gfs;
+// let gfs;
 
-conn.once("open", () => {
-  gfs = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
-});
+// conn.once("open", () => {
+//   gfs = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
+// });
 
 // Setting Storage Engine
-const storage = new GridFsStorage({
-  url: process.env.MONGO_URI,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
+// const storage = new GridFsStorage({
+//   url: process.env.MONGO_URI,
+//   file: (req, file) => {
+//     return new Promise((resolve, reject) => {
+//       crypto.randomBytes(16, (err, buf) => {
+//         if (err) {
+//           return reject(err);
+//         }
 
-        const filename = buf.toString("hex") + path.extname(file.originalname);
-        const fileInfo = {
-          filename: filename,
-          bucketName: "uploads",
-        };
-        resolve(fileInfo);
-      });
-    });
-  },
-});
-const upload = multer({ storage });
+//         const filename = buf.toString("hex") + path.extname(file.originalname);
+//         const fileInfo = {
+//           filename: filename,
+//           bucketName: "uploads",
+//         };
+//         resolve(fileInfo);
+//       });
+//     });
+//   },
+// });
+// const upload = multer({ storage });
 
 // Rendering the post form
 router.get("/create-post", async (req, res) => {
@@ -53,32 +58,43 @@ router.get("/create-post", async (req, res) => {
 });
 
 // Creating a post
-router.post("/", upload.single("file"), async (req, res) => {
-  let post = new Post({
-    title: req.body.title,
-    description: req.body.description,
-    image: req.file.filename,
-  });
+router.post(
+  "/",
+  multerUploads.single("file"),
+  cloudinaryConfig,
+  async (req, res) => {
+    const file = datauri(req);
 
-  const title = await Post.findOne({ title: req.body.title });
-  if (title) return res.status(400).send("Post already exists!");
+    cloudinary.uploader.upload(file.content, async (err, result) => {
+      if (err) throw err;
 
-  post = await post.save();
+      let post = new Post({
+        title: req.body.title,
+        description: req.body.description,
+        image: result.secure_url,
+      });
 
-  console.log(req.file);
+      const title = await Post.findOne({ title: req.body.title });
+      if (title) return res.status(400).send("Post already exists!");
 
-  res.status(200).json({
-    success: true,
-    data: _.pick(post, [
-      "_id",
-      "title",
-      "image",
-      "description",
-      "postedBy",
-      "createdAt",
-    ]),
-  });
-});
+      post = await post.save();
+
+      console.log(req.file);
+
+      res.status(200).json({
+        success: true,
+        data: _.pick(post, [
+          "_id",
+          "title",
+          "image",
+          "description",
+          "postedBy",
+          "createdAt",
+        ]),
+      });
+    });
+  }
+);
 
 // Getting all posts
 router.get("/", async (req, res) => {
