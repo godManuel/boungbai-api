@@ -53,20 +53,6 @@ mongoose
     console.error("Connection to MongoDB failed!", err);
   });
 
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useCreateIndex: true,
-//     useFindAndModify: false,S
-//   })
-//   .then(() => {
-//     console.log("Connected to MongoDB...");
-//   })
-//   .catch((err) => {
-//     console.error("Connection to MongoDB failed!", err);
-//   });
-
 // Calling middlewares
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
