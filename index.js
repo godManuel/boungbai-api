@@ -1,5 +1,5 @@
-const path = require('path')
-const hbs = require('express-handlebars');
+const path = require("path");
+const hbs = require("express-handlebars");
 require("dotenv").config();
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
@@ -41,11 +41,10 @@ if (!config.get("jwtPrivateKey")) {
 
 // Connecting to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect("mongodb://localhost/boungbai", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-
   })
   .then(() => {
     console.log("Connected to MongoDB...");
@@ -70,12 +69,11 @@ mongoose
 
 // Calling middlewares
 app.use(cors());
-app.use(express.json({ limit: '50mb'}));
-app.use(express.urlencoded({ limit: '50mb', extended: false }));
-app.engine('hbs', hbs({ extname: '.hbs',  defaultLayout: false,}))
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
-
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: false }));
+app.engine("hbs", hbs({ extname: ".hbs", defaultLayout: false }));
+app.set("view engine", "hbs");
+app.set("views", path.join(__dirname, "views"));
 
 // --- Custom Middlewares
 app.use("/api/auth", auth);

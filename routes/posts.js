@@ -10,6 +10,7 @@ const _ = require("lodash");
 const { Post } = require("../models/post");
 const { User } = require("../models/user");
 const { Comment } = require("../models/comment");
+const { Reply } = require("../models/reply");
 
 // Connecting to MongoDB
 const conn = mongoose.createConnection(process.env.MONGO_URI, {
@@ -33,7 +34,7 @@ const storage = new GridFsStorage({
         if (err) {
           return reject(err);
         }
-        
+
         const filename = buf.toString("hex") + path.extname(file.originalname);
         const fileInfo = {
           filename: filename,
@@ -126,7 +127,7 @@ router.post("/:id/comments", async (req, res) => {
 
   comment = await comment.save();
 
-  post.comments.push(comment);
+  post.comments.unshift(comment);
   post = await post.save();
   res.status(200).json({
     success: true,
@@ -146,6 +147,45 @@ router.get("/:id/comments", async (req, res) => {
   if (!post) return res.status(404).json("Invalid Post ID");
 
   res.status(200).json({ success: true, data: _.pick(post, ["comments"]) });
+});
+
+// Adding replies to a comment
+router.post("/:id/reply", async (req, res) => {
+  let comment = await Comment.findById(req.params.id);
+  if (!comment) return res.status(404).send("Invalid Post ID");
+
+  const user = await User.findOne({ _id: req.body.userId });
+  if (!user) return res.status(404).send("Invalid User ID");
+
+  let reply = new Reply({
+    text: req.body.text,
+    user,
+    comment,
+  });
+
+  reply = await reply.save();
+
+  comment.replies.unshift(reply);
+  comment = await comment.save();
+
+  res.status(200).json({
+    success: true,
+    data: _.pick(reply, [
+      "_id",
+      "text",
+      "user.name",
+      "comment.text",
+      "createdAt",
+    ]),
+  });
+});
+
+// Getting replies
+router.get("/:id/replies", async (req, res) => {
+  const comment = await Comment.findById(req.params.id).populate("replies");
+  if (!comment) return res.status(404).json("Invalid Post ID");
+
+  res.status(200).json({ success: true, data: _.pick(comment, ["replies"]) });
 });
 
 module.exports = router;

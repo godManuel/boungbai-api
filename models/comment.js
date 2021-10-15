@@ -13,6 +13,12 @@ const commentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Post",
   },
+  replies: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Reply",
+    },
+  ],
 });
 
 const Comment = mongoose.model("Comment", commentSchema);
