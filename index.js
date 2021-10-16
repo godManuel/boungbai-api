@@ -86,7 +86,7 @@ app.get("/", (req, res) => {
 });
 
 // Setting the port value
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8500;
 
 // Starting our server with the port value
 app.listen(port, () => {
