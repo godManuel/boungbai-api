@@ -114,19 +114,6 @@ router.get("/:id", async (req, res) => {
   res.status(200).json({ success: true, data: post });
 });
 
-// Get post image
-router.get("/:id/file/:filename", async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  if (!post) return res.status(404).send("Invalid Post ID");
-
-  gfs.find({ filename: req.params.filename }).toArray((err, file) => {
-    if (!file || file.length === 0) {
-      return res.status(400).send("No file found!");
-    }
-    gfs.openDownloadStreamByName(req.params.filename).pipe(res);
-  });
-});
-
 // Adding comments to a post
 router.post("/:id/comments", async (req, res) => {
   let post = await Post.findById(req.params.id);
