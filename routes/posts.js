@@ -1,8 +1,3 @@
-// const { GridFsStorage } = require("multer-gridfs-storage");
-// const { Grid } = require("gridfs-stream");
-// const crypto = require("crypto");
-// const path = require("path");
-// const multer = require("multer");
 const cloudinary = require("../utils/cloudinary");
 const cloudinaryConfig = cloudinary.cloudinaryConfig;
 const multer = require("../utils/multer");
@@ -16,41 +11,6 @@ const { Post } = require("../models/post");
 const { User } = require("../models/user");
 const { Comment } = require("../models/comment");
 const { Reply } = require("../models/reply");
-
-// Connecting to MongoDB
-// const conn = mongoose.createConnection(process.env.MONGO_URI, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-
-// Initialize gfs
-// let gfs;
-
-// conn.once("open", () => {
-//   gfs = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
-// });
-
-// Setting Storage Engine
-// const storage = new GridFsStorage({
-//   url: process.env.MONGO_URI,
-//   file: (req, file) => {
-//     return new Promise((resolve, reject) => {
-//       crypto.randomBytes(16, (err, buf) => {
-//         if (err) {
-//           return reject(err);
-//         }
-
-//         const filename = buf.toString("hex") + path.extname(file.originalname);
-//         const fileInfo = {
-//           filename: filename,
-//           bucketName: "uploads",
-//         };
-//         resolve(fileInfo);
-//       });
-//     });
-//   },
-// });
-// const upload = multer({ storage });
 
 // Rendering the post form
 router.get("/create-post", async (req, res) => {
