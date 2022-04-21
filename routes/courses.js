@@ -105,7 +105,7 @@ router.put(
   })
 );
 
-// Deleting a course
+// Deleting a course 
 router.delete(
   "/:id",
   auth,
