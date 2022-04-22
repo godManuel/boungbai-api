@@ -1,44 +1,49 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
-const Course = mongoose.model('Course', new mongoose.Schema({
-    name: {
+const courseSchema = new mongoose.Schema({
+    title: {
         type: String,
         required: true,
         minlength: 5,
         maxlength: 50
     },
     author: {
-        type: String,
+        type: String, 
         required: true,
-        minlength: 5,
-        maxlength: 50
-    },
-    date: {
-        type: Date,
-        default: Date.now()
+        minlength: 3, 
+        maxlength: 255
     },
     price: {
-        type: String,
-        required: true,
-        min: 5,
-        max: 300
+        type: Number,
+        min: 500,
+        max: 1000,
+        required: true
+    }, 
+    image: {
+        type: String
     },
     isPublished: {
-        type: Boolean,
+        type: Boolean, 
         default: false
     },
-    video: {
-        type: String
+}, { timestamps: true })
+
+const Course = mongoose.model('Course', courseSchema);
+
+// Slugify our category-name to get a slug value 
+courseSchema.pre('validate', function(){
+    if(this.title) {
+      this.slug = slugify(this.title, { lower: true, strict: true })
     }
-}));
+  })
 
-
-function validateCourse(course) {
+const validateCourse = (course) => {
     const schema = Joi.object({
-        name: Joi.string().min(5).max(50).required(),
+        title: Joi.string().min(5).max(50).required(),
         author: Joi.string().min(5).max(50).required(),
-        price: Joi.number().min(5).max(300).required()
+        price: Joi.number().min(500).max(1000).required(),
+        image: Joi.string().required()
     })
 
     return schema.validate(course);

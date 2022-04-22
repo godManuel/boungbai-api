@@ -1,7 +1,6 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
-const { Schema } = mongoose;
-mongoose.Promise = global.Promise;
+const Schema = mongoose.Schema;
 
 // Defining our User model
 const userSchema = new Schema({
@@ -13,6 +12,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     unique: true,
+    required: true,
     minlength: 5,
     maxlength: 50,
   },
@@ -20,13 +20,14 @@ const userSchema = new Schema({
     type: String,
     minlength: 5,
     maxlength: 255,
+    required: true
   },
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-// Validating the schema input using Joi
-const validateUser =(user) =>  {
+// Validating the user register request with Joi
+const validateUser = (user) =>  {
   const schema = Joi.object({
     name: Joi.string().min(5).max(50).required(),
     email: Joi.string().min(5).max(50).required(),
@@ -36,5 +37,16 @@ const validateUser =(user) =>  {
   return schema.validate(user);
 }
 
-exports.validate = validateUser;
+// Validating the user login request with Joi
+const validateAuth = (auth) => {
+  const schema = Joi.object({
+      email: Joi.string().min(5).max(50).required(),
+      password: Joi.string().min(5).max(255).required()
+  })
+
+  return schema.validate(auth);
+}
+
+exports.validateUser = validateUser;
+exports.validateAuth = validateAuth;
 exports.User = User;

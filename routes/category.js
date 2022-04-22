@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 const asyncMiddleware = require("../middleware/async");
 const auth = require('../middleware/auth')
-const { Course, validate } = require('../models/Course');
+const { Category, validate } = require('../models/Category');
 const cloudinary = require("../utils/cloudinary");
 const cloudinaryConfig = cloudinary.cloudinaryConfig;
 const multer = require("../utils/multer");
 const multerUploads = multer.multerUploads;
 const datauri = multer.datauri;
 
-// @DESC    Create a course
-// @ROUTE   /api/courses
+// @DESC    Create a category
+// @ROUTE   /api/category
 // @ACCESS  Private
 router.post('/', multerUploads.single("file"), cloudinaryConfig, auth, asyncMiddleware(async(req, res) => {
     const { error } = validate(req.body);
@@ -21,25 +21,22 @@ router.post('/', multerUploads.single("file"), cloudinaryConfig, auth, asyncMidd
     cloudinary.uploader.upload(file.content, async (err, result) => {
       if (err) throw err;
 
-      let course = new Course({
-        title: req.body.title,
-        author: req.body.author, 
-        price: req.body.price,
-        isPublished: req.body.isPublished,
-        image: result.secure_url
+      let category = new Category({
+        name: req.body.name,
+        image: result.secure_url,
       });
 
-      const title = await Course.findOne({ title: req.body.title });
-      if (title) return res.status(400).send("Course already exists!");
+      const name = await Category.findOne({ name: req.body.name });
+      if (name) return res.status(400).send("Category already exists!");
 
-      await course.save();
+      await category.save();
 
-      res.status(201).json({ course });
+      res.status(201).json({ category });
     })
 }));
 
-// @DESC    Update a course
-// @ROUTE   /api/course/course-title
+// @DESC    Update a category
+// @ROUTE   /api/category/category-name
 // @ACCESS  Private
 router.put('/:slug', multerUploads.single("file"), cloudinaryConfig, auth, asyncMiddleware(async(req, res) => {
   const { error } = validate(req.body);
@@ -50,19 +47,16 @@ router.put('/:slug', multerUploads.single("file"), cloudinaryConfig, auth, async
   cloudinary.uploader.upload(file.content, async (err, result) => {
     if (err) throw err;
 
-    let course = Course.updateOne({ slug: req.body.slug }, {
+    let category = Category.updateOne({ slug: req.body.slug }, {
       $set: {
-        title: req.body.title, 
-        author: req.body.author,
-        price: req.body.price,
-        isPublished: req.body.isPublished,
+        name: req.body.name, 
         image: result.secure_url
       }
     }, { new: true });
 
-    if(!course) return res.status(400).json('Course does not exist')
+    if(!category) return res.status(400).json('Category does not exist')
 
-    res.status(200).json({ course });
+    res.status(200).json({ category });
   })
 }));
 
@@ -70,10 +64,10 @@ router.put('/:slug', multerUploads.single("file"), cloudinaryConfig, auth, async
 // @ROUTE   /api/category/category-name
 // @ACCESS  Private
 router.delete('/:slug', auth, asyncMiddleware(async(req, res) => {
-  const course = await Course.deleteOne({ slug: req.params.slug })
-  if(!course) return res.status(400).json('Course does not exist')
+  const category = await Category.deleteOne({ slug: req.params.slug })
+  if(!category) return res.status(400).json('Category does not exist')
 
-  res.status(200).json({ course })
+  res.status(200).json({ category })
 }))
 
 

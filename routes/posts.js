@@ -7,10 +7,12 @@ const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
-const { Post } = require("../models/post");
+const { Post, validate } = require("../models/post");
 const { User } = require("../models/user");
 const { Comment } = require("../models/comment");
-const { Reply } = require("../models/reply");
+const { Replies } = require("../models/Replies");
+const asyncMiddleware = require('../middleware/async');
+const auth = require('../middleware/auth')
 
 // Rendering the post form
 router.get("/create-post", async (req, res) => {
@@ -18,11 +20,10 @@ router.get("/create-post", async (req, res) => {
 });
 
 // Creating a post
-router.post(
-  "/",
-  multerUploads.single("file"),
-  cloudinaryConfig,
-  async (req, res) => {
+router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, asyncMiddleware( async (req, res) => {
+    const { error } = validate(req.body);
+    if (error) return res.status(400).json(error.details[0].message);
+
     const file = datauri(req);
 
     cloudinary.uploader.upload(file.content, async (err, result) => {
@@ -37,24 +38,12 @@ router.post(
       const title = await Post.findOne({ title: req.body.title });
       if (title) return res.status(400).send("Post already exists!");
 
-      post = await post.save();
+      await post.save();
 
-      console.log(req.file);
-
-      res.status(200).json({
-        success: true,
-        data: _.pick(post, [
-          "_id",
-          "title",
-          "image",
-          "description",
-          "postedBy",
-          "createdAt",
-        ]),
-      });
+      res.status(200).json({ post });
     });
   }
-);
+));
 
 // Getting all posts
 router.get("/", async (req, res) => {
@@ -120,7 +109,7 @@ router.post("/:id/reply", async (req, res) => {
   const user = await User.findOne({ _id: req.body.userId });
   if (!user) return res.status(404).send("Invalid User ID");
 
-  let reply = new Reply({
+  let reply = new Replies({
     text: req.body.text,
     user,
     comment,

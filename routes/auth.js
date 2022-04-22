@@ -1,33 +1,75 @@
-const asyncMiddleware = require('../middleware/async');
-const Joi = require('joi');
 const bcrypt = require('bcrypt');
-const _ = require('lodash');
-const { User } = require('../models/user');
+const jwt = require('jsonwebtoken')
+const { User, validateAuth, validateUser } = require('../models/User');
+const asyncMiddleware = require('../middleware/async');
 const express = require('express');
 const router = express.Router();
 
-// Logging a user in
-router.post('/', asyncMiddleware(async (req, res) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+// @DESC    Login user
+// @ROUTE   /api/auth/login-user
+// @ACCESS  Public
+router.post('/login-user', asyncMiddleware(async (req, res) => {
+    const { error } = validateAuth(req.body);
+    if (error) return res.status(400).json(error.details[0].message);
 
     let user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(404).send('Invalid email or password');
+    if (!user) return res.status(404).json('Invalid credentials');
 
     const password = await bcrypt.compare(req.body.password, user.password);
-    if (!password) return res.status(404).send('Invalid email or password');
+    if (!password) return res.status(404).json('Invalid credentials');
 
-    res.send(_.pick(user, ["email"]));
+    const token = jwt.sign(
+        { _id: user.id, email: user.email },
+        process.env.JWT_KEY
+      );
+
+    res.status(200).json({
+      user: {
+        id: user.id, 
+        email: user.email,
+        token
+      }  
+    });
 }))
 
-// Validating the schema input with Joi
-function validate(auth) {
-    const schema = Joi.object({
-        email: Joi.string().min(5).max(50).required(),
-        password: Joi.string().min(5).max(255).required()
-    })
+// @DESC    Register user
+// @ROUTE   /api/auth/create-user
+// @ACCESS  Public
+router.post(
+    "/create-user",
+    asyncMiddleware(async (req, res) => {
+      const { error } = validateUser(req.body);
+      if (error) return res.status(400).json(error.details[0].message);
+  
+      let user = await User.findOne({ email: req.body.email });
+      if (user) return res.status(400).json('User already exist');
+  
+      user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+      });
+  
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
+      await user.save(); 
+  
+      const token = jwt.sign(
+        { _id: user.id, email: user.email },
+        process.env.JWT_KEY
+      );
 
-    return schema.validate(auth);
-}
+      res.status(201).json({
+        user: {
+            id: user.id,
+            email: user.email, 
+            token
+        }
+      });
+    })
+  );
+
+
+
 
 module.exports = router;

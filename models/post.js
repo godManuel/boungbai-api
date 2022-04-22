@@ -39,6 +39,7 @@ function validatePost(post) {
   const schema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
+    image: Joi.string().required()
   });
 
   return schema.validate(post);

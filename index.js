@@ -10,6 +10,7 @@ const posts = require("./routes/posts");
 const auth = require("./routes/auth");
 const users = require("./routes/users");
 const courses = require("./routes/courses");
+const category = require("./routes/category");
 const express = require("express");
 const connectDB = require("./config/mongo-db");
 const errorHandler = require("./middleware/error")
@@ -47,6 +48,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/api/auth", auth);
 app.use("/api/users", users);
 app.use("/api/courses", courses);
+app.use("/api/category", category)
 app.use("/api/posts", posts);
 
 // Index Route Message
