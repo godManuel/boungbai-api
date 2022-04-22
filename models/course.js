@@ -27,6 +27,10 @@ const courseSchema = new mongoose.Schema({
         type: Boolean, 
         default: false
     },
+    category: {
+        type: String, 
+        enum: ['Microsoft Office Suite', 'Graphic Design', 'Web-Development & Hosting', 'Penetration Testing']
+    }
 }, { timestamps: true })
 
 const Course = mongoose.model('Course', courseSchema);
@@ -43,7 +47,7 @@ const validateCourse = (course) => {
         title: Joi.string().min(5).max(50).required(),
         author: Joi.string().min(5).max(50).required(),
         price: Joi.number().min(500).max(1000).required(),
-        image: Joi.string().required()
+        category: Joi.string().required()
     })
 
     return schema.validate(course);

@@ -1,3 +1,4 @@
+const slugify = require('slugify')
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
@@ -29,7 +30,6 @@ const Category = mongoose.model('Category', categorySchema);
 const validateCategory = (category) => {
   const schema = Joi.object({
       name: Joi.string().min(5).max(255).required(),
-      image: Joi.string.required()
   })
 
   return schema.validate(category);

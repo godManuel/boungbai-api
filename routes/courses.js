@@ -26,6 +26,7 @@ router.post('/', multerUploads.single("file"), cloudinaryConfig, auth, asyncMidd
         author: req.body.author, 
         price: req.body.price,
         isPublished: req.body.isPublished,
+        category: req.body.category,
         image: result.secure_url
       });
 
