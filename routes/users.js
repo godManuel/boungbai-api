@@ -1,8 +1,4 @@
 const asyncMiddleware = require("../middleware/async");
-const config = require("config");
-const jwt = require("jsonwebtoken");
-const _ = require("lodash");
-const bcrypt = require("bcrypt");
 const { User, validate } = require("../models/User");
 const express = require("express");
 const router = express.Router();
