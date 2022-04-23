@@ -18,6 +18,7 @@ const auth = require("./routes/auth");
 const users = require("./routes/users");
 const courses = require("./routes/courses");
 const category = require("./routes/category");
+const tutorials = require("./routes/tutorials")
 const connectDB = require("./config/mongo-db");
 
 const app = express();
@@ -66,6 +67,7 @@ app.use("/api/users", users);
 app.use("/api/courses", courses);
 app.use("/api/category", category)
 app.use("/api/posts", posts);
+app.use("/api/tutorials", tutorials)
 
 // INDEX API PAGE
 app.get("/", (req, res) => {
