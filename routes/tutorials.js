@@ -5,7 +5,7 @@ const multerUploads = multer.multerUploads;
 const datauri = multer.datauri;
 const asyncMiddleware = require("../middleware/async");
 const auth = require("../middleware/auth");
-const { Tutorial, validate } = require("../models/Course");
+const { Tutorial, validate } = require("../models/Tutorial");
 const express = require("express");
 const router = express.Router();
 require("dotenv").config();
