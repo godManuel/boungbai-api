@@ -1,3 +1,4 @@
+const slugify = require('slugify')
 const mongoose = require("mongoose");
 const Joi = require("joi");
 
@@ -16,6 +17,11 @@ const postSchema = new mongoose.Schema(
       min: 5,
       max: 255,
     },
+    slug: {
+    type: String, 
+    required: true, 
+    unique: true
+  },
     image: {
       type: String,
     },
@@ -33,9 +39,15 @@ const postSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+postSchema.pre('validate', function(){
+    if(this.title) {
+      this.slug = slugify(this.title, { lower: true, strict: true })
+    }
+  })
+
 const Post = mongoose.model("Post", postSchema);
 
-function validatePost(post) {
+const validatePost = (post) => {
   const schema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),

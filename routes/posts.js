@@ -3,10 +3,8 @@ const cloudinaryConfig = cloudinary.cloudinaryConfig;
 const multer = require("../utils/multer");
 const multerUploads = multer.multerUploads;
 const datauri = multer.datauri;
-const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
-const _ = require("lodash");
 const { Post, validate } = require("../models/post");
 const { User } = require("../models/user");
 const { Comment } = require("../models/comment");
@@ -14,12 +12,13 @@ const { Replies } = require("../models/Replies");
 const asyncMiddleware = require('../middleware/async');
 const auth = require('../middleware/auth')
 
-// Rendering the post form
-router.get("/create-post", async (req, res) => {
-  res.render("index");
-});
+// router.get("/create-post", async (req, res) => {
+//   res.render("index");
+// });
 
-// Creating a post
+// @DESC    Create post
+// @ROUTE   /api/posts
+// @ACCESS  Private
 router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, asyncMiddleware( async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).json(error.details[0].message);
@@ -36,7 +35,7 @@ router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, asyncMidd
       });
 
       const title = await Post.findOne({ title: req.body.title });
-      if (title) return res.status(400).send("Post already exists!");
+      if (title) return res.status(400).json("Post already exists!");
 
       await post.save();
 
@@ -45,31 +44,37 @@ router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, asyncMidd
   }
 ));
 
-// Getting all posts
+// @DESC    Get posts
+// @ROUTE   /api/posts
+// @ACCESS  Public
 router.get("/", async (req, res) => {
   const posts = await Post.find();
 
-  if (!posts) return res.status(404).send("No posts yet");
+  if (!posts) return res.status(404).json("No posts yet");
 
-  res.status(200).json({ success: true, data: posts });
+  res.status(200).json({ posts });
 });
 
-// Getting a post
-router.get("/:id", async (req, res) => {
-  const post = await Post.findById(req.params.id);
+// @DESC    Get post
+// @ROUTE   /api/posts/post-title
+// @ACCESS  Public
+router.get("/:slug", async (req, res) => {
+  const post = await Post.findOne({ slug: req.params.slug });
 
-  if (!post) return res.status(404).send("Invalid Post ID");
+  if (!post) return res.status(404).json("Invalid Post ID");
 
-  res.status(200).json({ success: true, data: post });
+  res.status(200).json({ post });
 });
 
-// Adding comments to a post
-router.post("/:id/comments", async (req, res) => {
-  let post = await Post.findById(req.params.id);
-  if (!post) return res.status(404).send("Invalid Post ID");
+// @DESC    Add comments to post
+// @ROUTE   /api/posts/post-title/comments
+// @ACCESS  Public
+router.post("/:slug/comments", async (req, res) => {
+  let post = await Post.findOne({ slug: req.params.slug });
+  if (!post) return res.status(404).json("Invalid Post ID");
 
   const user = await User.findOne({ _id: req.body.userId });
-  if (!user) return res.status(404).send("Invalid User ID");
+  if (!user) return res.status(404).json("Invalid User ID");
 
   let comment = new Comment({
     text: req.body.text,
@@ -77,37 +82,37 @@ router.post("/:id/comments", async (req, res) => {
     post,
   });
 
-  comment = await comment.save();
+  await comment.save();
 
   post.comments.unshift(comment);
-  post = await post.save();
+  await post.save();
+
   res.status(200).json({
-    success: true,
-    data: _.pick(comment, [
-      "_id",
-      "text",
-      "user.name",
-      "post.title",
-      "createdAt",
-    ]),
+    comment: {
+      id: comment.id, 
+      text: comment.text,
+      username: comment.user.name,
+      postTitle: comment.post.title,
+      date: comment.createdAt 
+    }
   });
 });
 
 // Getting comment
-router.get("/:id/comments", async (req, res) => {
-  const post = await Post.findById(req.params.id).populate("comments");
+router.get("/:slug/comments", async (req, res) => {
+  const post = await Post.findOne({ slug: req.params.slug }).populate("comments");
   if (!post) return res.status(404).json("Invalid Post ID");
 
-  res.status(200).json({ success: true, data: _.pick(post, ["comments"]) });
+  res.status(200).json({ postComment: post.comments });
 });
 
 // Adding replies to a comment
-router.post("/:id/reply", async (req, res) => {
-  let comment = await Comment.findById(req.params.id);
-  if (!comment) return res.status(404).send("Invalid Post ID");
+router.post("/:slug/reply", async (req, res) => {
+  let comment = await Comment.findOne({ slug: req.params.slug });
+  if (!comment) return res.status(404).json("Invalid Post ID");
 
   const user = await User.findOne({ _id: req.body.userId });
-  if (!user) return res.status(404).send("Invalid User ID");
+  if (!user) return res.status(404).json("Invalid User ID");
 
   let reply = new Replies({
     text: req.body.text,
@@ -115,29 +120,28 @@ router.post("/:id/reply", async (req, res) => {
     comment,
   });
 
-  reply = await reply.save();
+  await reply.save();
 
   comment.replies.unshift(reply);
-  comment = await comment.save();
+  await comment.save();
 
   res.status(200).json({
-    success: true,
-    data: _.pick(reply, [
-      "_id",
-      "text",
-      "user.name",
-      "comment.text",
-      "createdAt",
-    ]),
+    reply: {
+      id: reply.id,
+      text: reply.text,
+      username: reply.user.name,
+      textComment: reply.comment.text,
+      date: reply.createdAt
+    }
   });
 });
 
 // Getting replies
-router.get("/:id/replies", async (req, res) => {
-  const comment = await Comment.findById(req.params.id).populate("replies");
+router.get("/:slug/replies", async (req, res) => {
+  const comment = await Comment.findOne({ slug: req.params.slug }).populate("replies");
   if (!comment) return res.status(404).json("Invalid Post ID");
 
-  res.status(200).json({ success: true, data: _.pick(comment, ["replies"]) });
+  res.status(200).json({ commentReply: comment.replies });
 });
 
 module.exports = router;

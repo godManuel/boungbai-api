@@ -6,7 +6,7 @@ const Schema = mongoose.Schema
 const categorySchema = new Schema({
   name: {
     type: String, 
-    enum: ['Microsoft Office Suite', 'Graphic Design', 'Web-Development & Hosting', 'Penetration Testing']
+    enum: ['Microsoft Office Suite', 'Graphic Design', 'Web Development & Hosting', 'Penetration Testing']
   }, 
   slug: {
     type: String, 

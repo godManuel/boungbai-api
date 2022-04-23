@@ -1,13 +1,18 @@
+const slugify = require('slugify')
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema
 
-const courseSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        minlength: 5,
-        maxlength: 50
+const courseSchema = new Schema({
+    name: {
+        type: String, 
+        enum: ['HTML', 'CSS', 'Bootstrap', 'Javascript', 'React', 'Node']
     },
+    slug: {
+        type: String, 
+        required: true, 
+        unique: true
+      },
     author: {
         type: String, 
         required: true,

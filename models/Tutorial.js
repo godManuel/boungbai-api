@@ -1,3 +1,4 @@
+const slugify = require('slugify');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
@@ -9,6 +10,11 @@ const tutorialSchema = new Schema({
     minlength: 3, 
     maxlength: 50
   }, 
+  slug: {
+    type: String, 
+    required: true, 
+    unique: true
+  },
   video: {
     type: String, 
     required: true
@@ -35,7 +41,7 @@ const validateTutorial = (tutorial) => {
       video: Joi.string().required()
   })
 
-  return schema.validate(course);
+  return schema.validate(tutorial);
 }
 
 const Tutorial = mongoose.model('Tutorial', tutorialSchema);
