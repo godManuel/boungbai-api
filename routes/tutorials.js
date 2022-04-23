@@ -48,19 +48,18 @@ router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, async (re
       async (err, result) => {
         if (err) throw err;
 
-        let course = new Course({
+        let tutorial = new Tutorial({
           name: req.body.name,
-          author: req.body.author,
-          price: req.body.price,
+          course: req.body.course,
           video: result.secure_url,
         });
 
-        const name = await Course.findOne({ name: req.body.name });
-        if (name) return res.status(400).json("Course already exists!");
+        const name = await Tutorial.findOne({ name: req.body.name });
+        if (name) return res.status(400).json("Tutorial already exists!");
 
-        await course.save();
+        await tutorial.save();
 
-        res.status(200).json({ course });
+        res.status(200).json({ tutorial });
       }
     );
   }
@@ -73,20 +72,19 @@ router.put( "/:id", auth, asyncMiddleware(async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).json(error.details[0].message);
 
-    const course = await Course.findByIdAndUpdate(
+    const tutorial = await Tutorial.findByIdAndUpdate(
       req.params.id,
       {
         name: req.body.name,
-        author: req.body.author,
-        price: req.body.price,
-        isPublished: req.body.isPublished,
+        course: req.body.course,
+        video: result.secure_url,
       },
       { new: true }
     );
 
-    if (!course) return res.status(404).json("Invalid Course ID");
+    if (!tutorial) return res.status(404).json("Invalid Course ID");
 
-    res.status(200).json({ course });
+    res.status(200).json({ tutorial });
   })
 );
 
@@ -94,9 +92,9 @@ router.put( "/:id", auth, asyncMiddleware(async (req, res) => {
 // @ROUTE   /api/courses/courseId
 // @ACCESS  Private
 router.delete("/:id", auth, asyncMiddleware(async (req, res) => {
-    const course = await Course.findByIdAndRemove(req.params.id);
-    if (!course) return res.status(404).json("Invalid Course ID");
-    res.status(200).json({ course });
+    const tutorial = await Tutorial.findByIdAndRemove(req.params.id);
+    if (!tutorial) return res.status(404).json("Invalid Course ID");
+    res.status(200).json({ tutorial });
   })
 );
 

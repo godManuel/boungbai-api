@@ -57,6 +57,5 @@ const validatePost = (post) => {
   return schema.validate(post);
 }
 
-exports.Post = Post;
-exports.postSchema = postSchema;
 exports.validate = validatePost;
+exports.Post = Post;
