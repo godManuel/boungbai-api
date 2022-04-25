@@ -36,6 +36,10 @@ process.on("uncaughtException", (ex) => {
   process.exit(1);
 });
 
+winston.exceptions.handle(
+  new winston.transports.File({ filename: 'uncaughtExceptions.log'})
+)
+
 process.on("unhandledRejection", (ex) => {
   console.log("WE GOT AN UNHANDLED REJECTION");
   winston.error(ex.message, ex);
