@@ -7,7 +7,6 @@ require("dotenv").config();
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const winston = require("winston")
-require("winston-mongodb");
 const cors = require("cors");
 const helmet = require("helmet");
 const xss = require("xss-clean");
@@ -25,10 +24,6 @@ const app = express();
 
 // LOGGING EXCEPTIONS TO A FILE
 winston.add(new winston.transports.File({ filename: 'logfile.log' }));
-winston.add(new winston.transports.MongoDB({
-    db: process.env.MONGO_URI,
-    level: 'info'
-}))
 
 process.on("uncaughtException", (ex) => {
   console.log("WE GOT AN UNCAUGHT EXCEPTION");
