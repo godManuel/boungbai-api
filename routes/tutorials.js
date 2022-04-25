@@ -68,7 +68,7 @@ router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, async (re
 // @DESC    Update course
 // @ROUTE   /api/courses/courseId
 // @ACCESS  Private
-router.put( "/:id", auth, asyncMiddleware(async (req, res) => {
+router.put("/:id", auth, asyncMiddleware(async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).json(error.details[0].message);
 
