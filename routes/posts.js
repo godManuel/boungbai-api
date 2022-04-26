@@ -5,7 +5,7 @@ const multerUploads = multer.multerUploads;
 const datauri = multer.datauri;
 const express = require("express");
 const router = express.Router();
-const { Post } = require("../models/Post");
+const { Post } = require('../models/Post')
 const { User } = require("../models/User");
 const { Comment } = require("../models/Comment");
 const { Replies } = require("../models/Replies");
@@ -19,7 +19,7 @@ const auth = require('../middleware/auth')
 // @DESC    Create post
 // @ROUTE   /api/posts
 // @ACCESS  Private
-router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, asyncMiddleware( async (req, res) => {
+router.post("/", multerUploads.single("file"), cloudinaryConfig, auth, asyncMiddleware(async (req, res) => {
     const file = datauri(req);
 
     cloudinary.uploader.upload(file.content, async (err, result) => {

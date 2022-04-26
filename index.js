@@ -36,9 +36,7 @@ winston.exceptions.handle(
 )
 
 process.on("unhandledRejection", (ex) => {
-  console.log("WE GOT AN UNHANDLED REJECTION");
-  winston.error(ex.message, ex);
-  process.exit(1);
+  throw ex;
 });
 
 // SETUP FOR PRODUCTION & SECURITY
