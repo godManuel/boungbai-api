@@ -1,5 +1,5 @@
 const asyncMiddleware = require("../middleware/async");
-const { User, validate } = require("../models/User");
+const { User } = require("../models/user");
 const express = require("express");
 const router = express.Router();
 
