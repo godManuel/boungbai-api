@@ -42,14 +42,14 @@ const Course = mongoose.model('Course', courseSchema);
 
 // Slugify our category-name to get a slug value 
 courseSchema.pre('validate', function(){
-    if(this.title) {
-      this.slug = slugify(this.title, { lower: true, strict: true })
+    if(this.name) {
+      this.slug = slugify(this.name, { lower: true, strict: true })
     }
   })
 
 const validateCourse = (course) => {
     const schema = Joi.object({
-        title: Joi.string().min(5).max(50).required(),
+        name: Joi.string().min(5).max(50).required(),
         author: Joi.string().min(5).max(50).required(),
         price: Joi.number().min(500).max(1000).required(),
         category: Joi.string().required()
