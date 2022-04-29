@@ -34,7 +34,7 @@ const courseSchema = new Schema({
     },
     category: {
         type: String, 
-        enum: ['Microsoft Office Suite', 'Graphic Design', 'Web-Development & Hosting', 'Penetration Testing']
+        enum: ['Microsoft Office Suite', 'Graphic Design', 'Web Development & Hosting', 'Penetration Testing']
     }
 }, { timestamps: true })
 
