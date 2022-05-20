@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
-const slugify = require('slugify')
+const slugify = require("slugify");
 
 const commentSchema = new mongoose.Schema({
-  text: {
+  name: {
     type: String,
     required: true,
   },
   slug: {
-    type: String, 
-    required: true, 
-    unique: true
+    type: String,
+    required: true,
+    unique: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,11 +27,11 @@ const commentSchema = new mongoose.Schema({
   ],
 });
 
-commentSchema.pre('validate', function(){
-  if(this.text){
-    this.slug = slugify(this.text, { lower: true, strict: true })
+commentSchema.pre("validate", function () {
+  if (this.text) {
+    this.slug = slugify(this.text, { lower: true, strict: true });
   }
-})
+});
 
 const Comment = mongoose.model("Comment", commentSchema);
 

@@ -35,6 +35,17 @@ router.post('/', multerUploads.single("file"), cloudinaryConfig, auth, asyncMidd
     })
 }));
 
+// @DESC    Get categories
+// @ROUTE   /api/category
+// @ACCESS  Public
+router.get("/", async (req, res) => {
+  const categories = await Category.find();
+
+  if (!categories) return res.status(404).json("No categories yet");
+
+  res.status(200).json({ categories });
+});
+
 // @DESC    Update a category
 // @ROUTE   /api/category/category-name
 // @ACCESS  Private

@@ -41,6 +41,7 @@ const courseSchema = new Schema(
         "Web Development & Hosting",
         "Penetration Testing",
       ],
+      required: true,
     },
   },
   { timestamps: true }

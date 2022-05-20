@@ -45,6 +45,17 @@ router.post(
   })
 );
 
+// @DESC    Get courses
+// @ROUTE   /api/courses
+// @ACCESS  Public
+router.get("/", async (req, res) => {
+  const courses = await Course.find();
+
+  if (!courses) return res.status(404).json("No courses yet");
+
+  res.status(200).json({ courses });
+});
+
 // @DESC    Update a course
 // @ROUTE   /api/course/course-title
 // @ACCESS  Private
