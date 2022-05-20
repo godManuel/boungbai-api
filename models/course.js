@@ -58,7 +58,7 @@ courseSchema.pre("validate", function () {
 
 const validateCourse = (course) => {
   const schema = Joi.object({
-    name: Joi.string().min(5).max(50).required(),
+    name: Joi.string().min(3).max(50).required(),
     author: Joi.string().min(5).max(50).required(),
     price: Joi.number().min(500).max(1000),
     category: Joi.string().required(),
