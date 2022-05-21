@@ -55,7 +55,7 @@ router.post(
 // @ROUTE   /api/courses
 // @ACCESS  Public
 router.get("/courses", async (req, res) => {
-  const courses = await Course.find();
+  const courses = await Course.find().populate("tutorials");
 
   if (!courses) return res.status(404).json("No courses yet");
 

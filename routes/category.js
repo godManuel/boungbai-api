@@ -45,7 +45,7 @@ router.post(
 // @ROUTE   /api/category
 // @ACCESS  Public
 router.get("/", async (req, res) => {
-  const categories = await Category.find();
+  const categories = await Category.find().populate("courses");
 
   if (!categories) return res.status(404).json("No categories yet");
 
