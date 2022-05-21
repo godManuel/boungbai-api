@@ -112,7 +112,7 @@ router.put(
 // @ROUTE   /api/courses/courseId
 // @ACCESS  Private
 router.delete(
-  "/:id",
+  "/tutorials/:id",
   auth,
   asyncMiddleware(async (req, res) => {
     const tutorial = await Tutorial.findByIdAndRemove(req.params.id);
