@@ -52,6 +52,13 @@ router.get("/", async (req, res) => {
   res.status(200).json({ categories });
 });
 
+router.get("/:id", async (req, res) => {
+  const category = await Category.findById(req.params.id);
+  if (!category) return res.status(400).json("Course does not exist!");
+
+  res.status(200).json({ category });
+});
+
 // @DESC    Update a category
 // @ROUTE   /api/category/category-name
 // @ACCESS  Private

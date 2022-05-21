@@ -62,6 +62,13 @@ router.get("/courses", async (req, res) => {
   res.status(200).json({ courses });
 });
 
+router.get("/courses/:id", async (req, res) => {
+  const course = await Course.findById(req.params.id);
+  if (!course) return res.status(404).json("Course does not exist!");
+
+  res.status(200).json({ course });
+});
+
 // @DESC    Update a course
 // @ROUTE   /api/course/course-title
 // @ACCESS  Private
