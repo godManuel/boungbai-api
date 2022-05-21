@@ -19,7 +19,7 @@ router.get("/create-course", async (req, res) => {
 // @ROUTE   /api/courses
 // @ACCESS  Private
 router.get(
-  "/",
+  "/tutorials",
   auth,
   asyncMiddleware(async (req, res) => {
     const tutorials = await Tutorial.find().sort({ date: -1 });
@@ -31,7 +31,7 @@ router.get(
 // @ROUTE   /api/course/course-name
 // @ACCESS  Private
 router.get(
-  "/slug",
+  "/tutorials/slug",
   auth,
   asyncMiddleware(async (req, res) => {
     const tutorial = await Tutorial.findOne({ slug: req.body.slug });
