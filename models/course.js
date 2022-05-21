@@ -11,7 +11,7 @@ const courseSchema = new Schema(
     },
     slug: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
     },
     author: {
@@ -33,15 +33,15 @@ const courseSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    tutorials: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tutorial",
+      },
+    ],
     category: {
-      type: String,
-      enum: [
-        "Microsoft Office Suite",
-        "Graphic Design",
-        "Web Development & Hosting",
-        "Penetration Testing",
-      ],
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
     },
   },
   { timestamps: true }

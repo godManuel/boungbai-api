@@ -6,7 +6,7 @@ const hbs = require("express-handlebars");
 require("dotenv").config();
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
-const winston = require("winston")
+const winston = require("winston");
 const cors = require("cors");
 const helmet = require("helmet");
 const xss = require("xss-clean");
@@ -17,13 +17,13 @@ const auth = require("./routes/auth");
 const users = require("./routes/users");
 const courses = require("./routes/courses");
 const category = require("./routes/category");
-const tutorials = require("./routes/tutorials")
+const tutorials = require("./routes/tutorials");
 const connectDB = require("./config/mongo-db");
 
 const app = express();
 
 // LOGGING EXCEPTIONS TO A FILE
-winston.add(new winston.transports.File({ filename: 'logfile.log' }));
+winston.add(new winston.transports.File({ filename: "logfile.log" }));
 
 process.on("uncaughtException", (ex) => {
   console.log("WE GOT AN UNCAUGHT EXCEPTION");
@@ -32,8 +32,8 @@ process.on("uncaughtException", (ex) => {
 });
 
 winston.exceptions.handle(
-  new winston.transports.File({ filename: 'uncaughtExceptions.log'})
-)
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
 
 process.on("unhandledRejection", (ex) => {
   throw ex;
@@ -41,13 +41,15 @@ process.on("unhandledRejection", (ex) => {
 
 // SETUP FOR PRODUCTION & SECURITY
 app.set("trust proxy", 1);
-app.use(rateLimit({
-  windowsMS: 15 * 60 * 1000,
-  max: 100
-}));
+app.use(
+  rateLimit({
+    windowsMS: 15 * 60 * 1000,
+    max: 100,
+  })
+);
 app.use(cors());
 app.use(helmet());
-app.use(xss())
+app.use(xss());
 
 // EXPRESS MIDDLEWARES
 app.use(express.json({ limit: "50mb" }));
@@ -61,10 +63,10 @@ app.set("views", path.join(__dirname, "views"));
 // ROUTES
 app.use("/api/auth", auth);
 app.use("/api/users", users);
-app.use("/api/courses", courses);
-app.use("/api/category", category)
+app.use("/api", courses);
+app.use("/api/category", category);
 app.use("/api/posts", posts);
-app.use("/api/tutorials", tutorials)
+app.use("/api", tutorials);
 
 // INDEX API PAGE
 app.get("/", (req, res) => {
@@ -75,15 +77,15 @@ app.get("/", (req, res) => {
 const port = process.env.PORT || 8500;
 
 // STARTING OUR SERVER WITH A START FUNCTION
-const start = async() => {
+const start = async () => {
   try {
-    await connectDB()
+    await connectDB();
     app.listen(port, () => {
       console.log(`Listening on port ${port}...`);
     });
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-start()
+start();
