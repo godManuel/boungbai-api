@@ -15,8 +15,8 @@ router.get("/create-course", async (req, res) => {
   res.render("course");
 });
 
-// @DESC    Get all tutorials based on a
-// @ROUTE   /api/courses
+// @DESC    Get all tutorials
+// @ROUTE   /api/tutorials
 // @ACCESS  Private
 router.get(
   "/tutorials",
@@ -27,8 +27,8 @@ router.get(
   })
 );
 
-// @DESC    Get a course
-// @ROUTE   /api/course/course-name
+// @DESC    Get a tutorial
+// @ROUTE   /api/tutorials/tutorial-name
 // @ACCESS  Private
 router.get(
   "/tutorials/slug",
@@ -83,26 +83,21 @@ router.post(
 );
 
 // @DESC    Update course
-// @ROUTE   /api/courses/courseId
+// @ROUTE   /api/courses/course-id
 // @ACCESS  Private
 router.put(
   "/:id",
   auth,
   asyncMiddleware(async (req, res) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).json(error.details[0].message);
-
     const tutorial = await Tutorial.findByIdAndUpdate(
       req.params.id,
       {
         name: req.body.name,
-        course: req.body.course,
-        video: result.secure_url,
       },
       { new: true }
     );
 
-    if (!tutorial) return res.status(404).json("Invalid Course ID");
+    if (!tutorial) return res.status(404).json("Invalid Tutorial ID");
 
     res.status(200).json({ tutorial });
   })
@@ -116,7 +111,8 @@ router.delete(
   auth,
   asyncMiddleware(async (req, res) => {
     const tutorial = await Tutorial.findByIdAndRemove(req.params.id);
-    if (!tutorial) return res.status(404).json("Invalid Course ID");
+    if (!tutorial) return res.status(404).json("Invalid Tutorial ID");
+
     res.status(200).json({ tutorial });
   })
 );

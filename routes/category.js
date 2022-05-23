@@ -52,6 +52,9 @@ router.get("/", async (req, res) => {
   res.status(200).json({ categories });
 });
 
+// @DESC    Get a category
+// @ROUTE   /api/category/category-id
+// @ACCESS  Private
 router.get("/:id", async (req, res) => {
   const category = await Category.findById(req.params.id);
   if (!category) return res.status(400).json("Course does not exist!");
@@ -59,49 +62,14 @@ router.get("/:id", async (req, res) => {
   res.status(200).json({ category });
 });
 
-// @DESC    Update a category
-// @ROUTE   /api/category/category-name
-// @ACCESS  Private
-router.put(
-  "/:slug",
-  multerUploads.single("file"),
-  cloudinaryConfig,
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).json(error.details[0].message);
-
-    const file = datauri(req);
-
-    cloudinary.uploader.upload(file.content, async (err, result) => {
-      if (err) throw err;
-
-      let category = Category.updateOne(
-        { slug: req.body.slug },
-        {
-          $set: {
-            name: req.body.name,
-            image: result.secure_url,
-          },
-        },
-        { new: true }
-      );
-
-      if (!category) return res.status(400).json("Category does not exist");
-
-      res.status(200).json({ category });
-    });
-  })
-);
-
 // @DESC    Delete a category
-// @ROUTE   /api/category/category-name
+// @ROUTE   /api/category/category-id
 // @ACCESS  Private
 router.delete(
-  "/:slug",
+  "/:id",
   auth,
   asyncMiddleware(async (req, res) => {
-    const category = await Category.deleteOne({ slug: req.params.slug });
+    const category = await Category.findByIdAndRemove({ id: req.params.id });
     if (!category) return res.status(400).json("Category does not exist");
 
     res.status(200).json({ category });

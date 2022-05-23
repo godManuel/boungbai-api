@@ -62,59 +62,52 @@ router.get("/courses", async (req, res) => {
   res.status(200).json({ courses });
 });
 
-router.get("/courses/:id", async (req, res) => {
-  const course = await Course.findById(req.params.id);
+// @DESC    Get course
+// @ROUTE   /api/courses/course-name
+// @ACCESS  Public
+router.get("/courses/:slug", async (req, res) => {
+  const course = await Course.findOne({ slug: req.params.slug }).populate(
+    "tutorials"
+  );
   if (!course) return res.status(404).json("Course does not exist!");
 
   res.status(200).json({ course });
 });
 
 // @DESC    Update a course
-// @ROUTE   /api/course/course-title
+// @ROUTE   /api/course/course-id
 // @ACCESS  Private
 router.put(
-  "/courses/:slug",
-  multerUploads.single("file"),
-  cloudinaryConfig,
+  "/courses/:id",
   auth,
   asyncMiddleware(async (req, res) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).json(error.details[0].message);
-
-    const file = datauri(req);
-
-    cloudinary.uploader.upload(file.content, async (err, result) => {
-      if (err) throw err;
-
-      let course = Course.updateOne(
-        { slug: req.body.slug },
-        {
-          $set: {
-            title: req.body.title,
-            author: req.body.author,
-            price: req.body.price,
-            isPublished: req.body.isPublished,
-            image: result.secure_url,
-          },
+    const course = await Course.findByIdAndUpdate(
+      { id: req.params.id },
+      {
+        $set: {
+          title: req.body.title,
+          author: req.body.author,
+          price: req.body.price,
+          isPublished: req.body.isPublished,
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
 
-      if (!course) return res.status(400).json("Course does not exist");
+    if (!course) return res.status(400).json("Course does not exist");
 
-      res.status(200).json({ course });
-    });
+    res.status(200).json({ course });
   })
 );
 
 // @DESC    Delete a category
-// @ROUTE   /api/category/category-name
+// @ROUTE   /api/category/category-id
 // @ACCESS  Private
 router.delete(
   "/courses/:id",
   auth,
   asyncMiddleware(async (req, res) => {
-    const course = await Course.findByIdAndRemove(req.params.id);
+    const course = await Course.findByIdAndRemove({ id: req.params.id });
     if (!course) return res.status(400).json("Course does not exist");
 
     res.status(200).json({ course });
