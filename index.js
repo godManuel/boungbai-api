@@ -10,7 +10,6 @@ const winston = require("winston");
 const cors = require("cors");
 const helmet = require("helmet");
 const xss = require("xss-clean");
-const rateLimit = require("express-rate-limit");
 // @Import - Custom modules
 const posts = require("./routes/posts");
 const auth = require("./routes/auth");
@@ -40,13 +39,6 @@ process.on("unhandledRejection", (ex) => {
 });
 
 // SETUP FOR PRODUCTION & SECURITY
-app.set("trust proxy", 1);
-app.use(
-  rateLimit({
-    windowsMS: 15 * 60 * 1000,
-    max: 100,
-  })
-);
 app.use(cors());
 app.use(helmet());
 app.use(xss());
@@ -70,7 +62,7 @@ app.use("/api", tutorials);
 
 // INDEX API PAGE
 app.get("/", (req, res) => {
-  res.send("Boungbai API with Node.js & Express");
+  res.send("Boungbai API with Node.js & Express")
 });
 
 // PORT VALUE

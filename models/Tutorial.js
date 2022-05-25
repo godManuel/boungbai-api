@@ -13,7 +13,6 @@ const tutorialSchema = new Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
     },
     video: {
