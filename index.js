@@ -62,7 +62,7 @@ app.use("/api", tutorials);
 
 // INDEX API PAGE
 app.get("/", (req, res) => {
-  res.send("Boungbai API with Node.js & Express")
+  res.send("Boungbai API with Node.js & Express");
 });
 
 // PORT VALUE
