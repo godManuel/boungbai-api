@@ -53,10 +53,12 @@ router.get("/", async (req, res) => {
 });
 
 // @DESC    Get a category
-// @ROUTE   /api/category/category-id
+// @ROUTE   /api/category/category-name
 // @ACCESS  Private
-router.get("/:id", async (req, res) => {
-  const category = await Category.findById(req.params.id).populate("courses");
+router.get("/:slug", async (req, res) => {
+  const category = await Category.findOne({ slug: req.params.slug }).populate(
+    "courses"
+  );
   if (!category) return res.status(400).json("Course does not exist!");
 
   res.status(200).json({ category });
