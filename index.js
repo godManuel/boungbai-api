@@ -1,6 +1,5 @@
 // @Import - Built-in modules
 const path = require("path");
-const http = require("http");
 // @Import - Third-party modules
 const express = require("express");
 const hbs = require("express-handlebars");
@@ -69,13 +68,11 @@ app.get("/", (req, res) => {
 // PORT VALUE
 const port = process.env.PORT || 8500;
 
-const server = http.createServer(app);
-
 // STARTING OUR SERVER WITH A START FUNCTION
 const start = async () => {
   try {
     await connectDB();
-    server.listen(port, () => {
+    app.listen(port, () => {
       console.log(`Listening on port ${port}...`);
     });
   } catch (error) {
