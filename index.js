@@ -3,7 +3,7 @@ const path = require("path");
 // @Import - Third-party modules
 const express = require("express");
 const hbs = require("express-handlebars");
-require("dotenv").config();
+const dotenv = require("dotenv");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const winston = require("winston");
@@ -19,9 +19,13 @@ const category = require("./routes/category");
 const tutorials = require("./routes/tutorials");
 const connectDB = require("./config/mongo-db");
 
+/* Init Express App **/
 const app = express();
 
-// LOGGING EXCEPTIONS TO A FILE
+/* Specify path to env. variables **/
+dotenv.config({ path: "./vars/.env" });
+
+/* Configure winston for logging errors **/
 winston.add(new winston.transports.File({ filename: "logfile.log" }));
 
 process.on("uncaughtException", (ex) => {
@@ -38,21 +42,21 @@ process.on("unhandledRejection", (ex) => {
   throw ex;
 });
 
-// SETUP FOR PRODUCTION & SECURITY
+/* Production middlewares **/
 app.use(cors());
 app.use(helmet());
 app.use(xss());
 
-// EXPRESS MIDDLEWARES
+/* Express middlewares **/
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 
-// VIEW ENGINE CONFIG
+/* Express-handlebars middlewares **/
 app.engine("hbs", hbs({ extname: ".hbs", defaultLayout: false }));
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 
-// ROUTES
+/* Routes **/
 app.use("/api/auth", auth);
 app.use("/api/users", users);
 app.use("/api", courses);
@@ -60,15 +64,15 @@ app.use("/api/category", category);
 app.use("/api/posts", posts);
 app.use("/api", tutorials);
 
-// INDEX API PAGE
+/* Index route **/
 app.get("/", (req, res) => {
   res.send("Boungbai API with Node.js & Express");
 });
 
-// PORT VALUE
+/* Port **/
 const port = process.env.PORT || 8500;
 
-// STARTING OUR SERVER WITH A START FUNCTION
+/* Start Application **/
 const start = async () => {
   try {
     await connectDB();
